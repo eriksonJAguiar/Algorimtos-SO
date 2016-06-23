@@ -88,19 +88,44 @@ int main(){
       srand(time(NULL));
     for(i = 0;i<10;i++){
         processo p;
-        //int temp = 0;
-        //printf("Digite o tempo em ms que o processo %d precisara para terminar sua tarefa\n",i+1);
-        //scanf("%d",&temp);
-        p.tempoExecucao = (rand()%700)+10;
+        int temp = 0;
+        printf("Digite o tempo em ms que o processo %d precisara para terminar sua tarefa\n",i+1);
+        scanf("%d",&temp);
+        //p.tempoExecucao = (rand()%700)+10;
+        p.tempoExecucao = temp;
         p.contadorTempo = 0;
         p.id = i + 1;
         inserir(p);
     }
-    while(tam > 0){
+    //i = 0;
+    while(tam > 0){ //cria as threads
       //pthread_t t;
       processo *p = retirar_primeiro();
       //listaP[0].thread = t;
       pthread_create(&p->thread,NULL,funcao,(void *)(p));
+        int cont = 0;
+        while (cont < QUANTUM || cont < p->tempoExecucao) {
+          sleep(1/60);//sleep de 1 milesimo
+          cont++;
+        }
+        p->contadorTempo+=cont;
+
+        if((p->contadorTempo) <= (p->tempoExecucao)){
+            inserir(*p);
+            printf("Thread %d Interrompida\n",p->id);
+        }
+        else{
+            printf("Thread %d Terminada\n\n\n",p->id);
+            pthread_join(p->thread,NULL);
+        }
+
+        //pthread_join(p->thread,NULL);
+        i++;
+    }
+
+    /*while(tam > 10){ //continua o processo
+      processo *p = retirar_primeiro();
+        funcao((void *)(p)); // chama processo
         int cont = 0;
         while (cont < QUANTUM || cont < p->tempoExecucao) {
           sleep(1/60);//sleep de 1 milesimo
@@ -116,8 +141,10 @@ int main(){
             pthread_join(p->thread,NULL);
         }
 
-        pthread_join(p->thread,NULL);
-    }
+        //pthread_join(p->thread,NULL);
+    }*/
+
+
 
     //printf("Fora\n");
 
