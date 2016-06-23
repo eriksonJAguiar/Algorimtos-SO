@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1466009032 source:/home/eduardo/RegiaoCR/main.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+
